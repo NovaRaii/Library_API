@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Http\Requests\CategoryRequest;
+use App\Models\Book;
 
 class CategoryController extends Controller
 {
@@ -193,4 +194,46 @@ class CategoryController extends Controller
         'category' => $category,
     ]);
 }
+
+    /**
+ * @api {get} /api/categories/:categoryId/books List books by category
+ * @apiName GetCategoryBooks
+ * @apiGroup Categories
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {Number} categoryId Category’s unique ID.
+ *
+ * @apiSuccess {Object[]} books List of books in the category.
+ */
+    public function books($categoryId)
+    {
+        $category = Category::findOrFail($categoryId);
+        $books = $category->books()->get();
+        return response()->json([
+            'books' => $books,
+        ]);
+    }
+
+    /**
+ * @api {delete} /api/categories/:categoryId/books/:bookId Delete category's book
+ * @apiName DestroyCategoryBook
+ * @apiGroup Categories
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {Number} categoryId Category’s unique ID.
+ * @apiParam {Number} bookId Book’s unique ID.
+ *
+ * @apiSuccess {String} message Deletion confirmation.
+ * @apiSuccess {Number} id Deleted book ID.
+ */
+    public function destroyBook($categoryId, $bookId)
+    {
+        $category = Category::findOrFail($categoryId);
+        $book = Book::where('id', $bookId)->where('category_id', $category->id)->firstOrFail();
+        $book->delete();
+        return response()->json([
+            'message' => 'Book deleted successfully',
+            'id' => $bookId
+        ]);
+    }
 }
