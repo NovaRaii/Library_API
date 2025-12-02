@@ -122,7 +122,7 @@ class BookController extends Controller
 
         return response()->json([
             'book' => $book,
-        ]);
+        ], 201);
     }
 /**
  * @api {put} /api/books/:id Update book

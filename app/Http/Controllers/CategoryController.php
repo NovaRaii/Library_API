@@ -82,7 +82,7 @@ class CategoryController extends Controller
 
         return response()->json([
             'category' => $category,
-        ]);
+        ], 201);
     }
 /**
  * @api {put} /api/categories/:id Update category
